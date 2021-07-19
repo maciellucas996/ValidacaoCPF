@@ -1,0 +1,54 @@
+delimiter $$
+drop function if exists f_validarcpf;
+create function f_validarcpf (cpf varchar(50)) 
+returns varchar (50) 
+begin
+	declare situação varchar(50);
+	set @num1 = (substring(cpf, 1, 1));
+	set @num2 = (substring(cpf, 2, 1));
+    set @num3 = (substring(cpf, 3, 1));
+    set @num4 = (substring(cpf, 4, 1));
+    set @num5 = (substring(cpf, 5, 1));
+    set @num6 = (substring(cpf, 6, 1));
+    set @num7 = (substring(cpf, 7, 1));
+    set @num8 = (substring(cpf, 8, 1));
+    set @num9 = (substring(cpf, 9, 1));
+    set @num10 = (substring(cpf, 10, 1));
+    set @num11 = (substring(cpf, 11, 1));
+    
+    if
+		(@num1 = @num2) and (@num2 = @num3) and (@num3 = @num4) and (@num4 = @num5) and (@num5 = @num6) and (@num6 = @num7)
+		and (@num7 = @num8) and (@num8 = @num9) and (@num9 = @num10) and (@num10 = @num11)
+    then
+		set situação = 'CPF inválido';
+   
+    else
+		set @soma1 = @num1 * 10 + @num2 * 9 + @num3 * 8 + @num4 * 7 + @num5 * 6 + @num6 * 5 + @num7 * 4 
+		+ @num8 * 3 + @num9 * 2;
+		set @vl_resto1 = mod((@soma1 * 10), 11);
+			if @vl_resto1 = 10 
+				then set @vl_resto1 = 0;
+			else
+				set @vl_resto1 = @vl_resto1;
+			end if;
+
+		set @soma2 = @num1 * 11 + @num2 * 10 + @num3 * 9 + @num4 * 8 + @num5 * 7 + @num6 * 6 + @num7 * 5 + @num8 * 4 + @num9 * 3 + @num10 * 2;
+
+		set @vl_resto2 = mod((@soma2 * 10), 11);
+
+		if @vl_resto2 = 10 then 
+			set @vl_resto2 = 0;
+		else
+			set @vl_resto2 = @vl_resto2;
+		end if;
+
+		if (@vl_resto1 = @num10) and (@vl_resto2 = @num11) then 
+			set situação = 'verdadeiro';
+		else 
+			set situação = 'falso';
+	end if;
+end if;
+
+return situação;
+
+end$$
